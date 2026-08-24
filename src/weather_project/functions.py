@@ -45,7 +45,8 @@ def calculations(weather_df):
     index_for_coldest = weather_df["min temperature"].idxmin()
     coldest_date = weather_df.loc[index_for_coldest, "date"]
     temp_range = weather_df["max temperature"] - weather_df["min temperature"]
-    temp_range_avg = temp_range.mean()
+    weather_df["Daily Temperature range"] = temp_range
+    temp_range_avg = weather_df["Daily Temperature range"].mean()
     return max_temp, min_temp, avg_max_temp, avg_min_temp, avg_temp, hottest_date, coldest_date, temp_range_avg
 
 
