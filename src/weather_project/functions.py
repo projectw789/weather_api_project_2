@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime,timedelta
+from datetime import datetime
 
 
 
@@ -53,7 +53,7 @@ def api_call(latitude, longitude, start_date, end_date):
         return None
 
     except KeyError:
-        print("Sorry, we couldn't find a 'daily' key within the DataFrame.")
+        print("Sorry, we could not find the 'daily' data within the API JSON response.")
         return None
 
     return daily_data
