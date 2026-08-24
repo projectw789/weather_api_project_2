@@ -16,4 +16,6 @@ hot_and_cold_graph(weather_df)
 
 daily_avg_graph(weather_df)
 
+weather_df.to_csv("data/weather_dataframe.csv")
+
 
