@@ -7,23 +7,59 @@ from datetime import datetime,timedelta
 
 
 def api_inputs():
-    latitude = float(input("whats the latitude?(00.00 format)  "))
-    longitude = float(input("whats the longitude?(00.00 format) "))
-    start_date = input("Whats the start date?(YYYY-MM-DD format) ")
-    end_date = input("Whats the end date?(YYYY-MM-DD format) ")
+    try:
+        latitude = float(input("whats the latitude?(00.00 format)  "))
+        longitude = float(input("whats the longitude?(00.00 format) "))
+        start_date = input("Whats the start date?(YYYY-MM-DD format) ")
+        end_date = input("Whats the end date?(YYYY-MM-DD format) ")
+
+    except ValueError:
+        print("please enter the coordinate in the correct float format")
+        return None
+
+    try:
+        start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
+
+    except ValueError:
+        print("please enter dates in the correct format")
+        return None
+
+    if start_date_dt>end_date_dt:
+        print("please make sure your start date is before the end date")
+        return None
+
     return (latitude, longitude, start_date, end_date)
+
 
 def api_call(latitude, longitude, start_date, end_date):
     url = (f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={start_date}&end_date={end_date}&daily=temperature_2m_max,temperature_2m_min")
+    try:
+        api_response = requests.get(url)
+        api_response.raise_for_status()
+        json_ = api_response.json()
+        daily_data = json_["daily"]
 
-    api_response = requests.get(url)
+    except requests.exceptions.ConnectionError:
+        print("Having connection issues, please try again later")
+        return None
 
-    json_ = api_response.json()
+    except requests.exceptions.HTTPError:
+        print("sorry this is a http error. please recheck your date inputs.")
+        return None
 
-    daily_data = json_["daily"]
+    except requests.exceptions.JSONDecodeError:
+        print("sorry, we didn't get returned a valid JSON")
+        return None
+
+    except KeyError:
+        print("sorry, couldnt find a 'daily' key")
+        return None
+
     return daily_data
 
 def dataframe(daily_data):
+
     weather_df = pd.DataFrame({
         "date" : daily_data["time"],
         "max temperature" : daily_data["temperature_2m_max"],
