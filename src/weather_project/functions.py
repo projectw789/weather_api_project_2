@@ -8,13 +8,13 @@ from datetime import datetime,timedelta
 
 def api_inputs():
     try:
-        latitude = float(input("whats the latitude?(00.00 format)  "))
-        longitude = float(input("whats the longitude?(00.00 format) "))
-        start_date = input("Whats the start date?(YYYY-MM-DD format) ")
-        end_date = input("Whats the end date?(YYYY-MM-DD format) ")
+        latitude = float(input("What is the latitude?(00.00 format)  "))
+        longitude = float(input("What is the longitude?(00.00 format) "))
+        start_date = input("What is the start date?(YYYY-MM-DD format) ")
+        end_date = input("What is the end date?(YYYY-MM-DD format) ")
 
     except ValueError:
-        print("please enter the coordinate in the correct float format")
+        print("Please enter the co-ordinates in the correct float format.")
         return None
 
     try:
@@ -22,11 +22,11 @@ def api_inputs():
         end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
 
     except ValueError:
-        print("please enter dates in the correct format")
+        print("Please enter dates in the correct format.")
         return None
 
     if start_date_dt>end_date_dt:
-        print("please make sure your start date is before the end date")
+        print("Please ensure your start date is before the end date.")
         return None
 
     return (latitude, longitude, start_date, end_date)
@@ -41,19 +41,19 @@ def api_call(latitude, longitude, start_date, end_date):
         daily_data = json_["daily"]
 
     except requests.exceptions.ConnectionError:
-        print("Having connection issues, please try again later")
+        print("Connection Error, please try again later.")
         return None
 
     except requests.exceptions.HTTPError:
-        print("sorry this is a http error. please recheck your date inputs.")
+        print("HTTP Error, please recheck your date inputs.")
         return None
 
     except requests.exceptions.JSONDecodeError:
-        print("sorry, we didn't get returned a valid JSON")
+        print("Sorry, we didn't recieve a valid JSON response.")
         return None
 
     except KeyError:
-        print("sorry, couldnt find a 'daily' key")
+        print("Sorry, we couldn't find a 'daily' key within the DataFrame.")
         return None
 
     return daily_data
@@ -84,6 +84,7 @@ def calculations(weather_df):
     weather_df["Daily Temperature range"] = temp_range
     temp_range_avg = weather_df["Daily Temperature range"].mean()
     return max_temp, min_temp, avg_max_temp, avg_min_temp, avg_temp, hottest_date, coldest_date, temp_range_avg
+
 
 
 def hot_and_cold_graph(weather_df):
