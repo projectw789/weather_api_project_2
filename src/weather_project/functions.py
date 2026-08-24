@@ -1,0 +1,49 @@
+import requests
+import pandas as pd
+import matplotlib as mpl
+from datetime import datetime,timedelta
+
+
+
+
+def api_inputs():
+    latitude = float(input("whats the latitude?(00.00 format)  "))
+    longitude = float(input("whats the longitude?(00.00 format) "))
+    start_date = input("Whats the start date?(YYYY-MM-DD format) ")
+    end_date = input("Whats the end date?(YYYY-MM-DD format) ")
+    return (latitude, longitude, start_date, end_date)
+
+def api_call(latitude, longitude, start_date, end_date):
+    url = (f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={start_date}&end_date={end_date}&daily=temperature_2m_max,temperature_2m_min")
+
+    api_response = requests.get(url)
+
+    json_ = api_response.json()
+
+    daily_data = json_["daily"]
+    return daily_data
+
+def dataframe(daily_data):
+    weather_df = pd.DataFrame({
+        "date" : daily_data["time"],
+        "max temperature" : daily_data["temperature_2m_max"],
+        "min temperature" : daily_data["temperature_2m_min"]
+    })
+    weather_df["date"] = pd.to_datetime(weather_df["date"])
+    return weather_df
+
+def calculations(weather_df):
+    max_temp = weather_df["max temperature"].max()
+    min_temp = weather_df["min temperature"].min()
+    avg_max_temp = weather_df["max temperature"].mean()
+    avg_min_temp = weather_df["min temperature"].mean()
+    daily_avg_temp = weather_df[["max temperature","min temperature"]].mean(axis=1)
+    weather_df["daily_avg_temp"] = (daily_avg_temp)
+    avg_temp = weather_df["daily_avg_temp"].mean()
+    index_for_hottest = weather_df["max temperature"].idxmax()
+    hottest_date = weather_df.loc[index_for_hottest, "date"]
+    index_for_coldest = weather_df["min temperature"].idxmin()
+    coldest_date = weather_df.loc[index_for_coldest, "date"]
+    temp_range = weather_df["max temperature"] - weather_df["min temperature"]
+    temp_range_avg = temp_range.mean()
+    return max_temp, min_temp, avg_max_temp, avg_min_temp, avg_temp, hottest_date, coldest_date, temp_range_avg

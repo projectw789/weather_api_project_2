@@ -1,33 +1,16 @@
-import requests
-import pandas as pd
-# import matplotlib as mpl
-# from datetime import datetime, timedelta
-
 # my bae in ilford  51.5577 &  0.0728
 
-latitude = float(input("whats the latitude?(00.00 format)  "))
-longitude = float(input("whats the longitude?(00.00 format) "))
-start_date = input("Whats the start date?(YYYY-MM-DD format) ")
-end_date = input("Whats the end date?(YYYY-MM-DD format) ")
+from .functions import api_inputs,api_call,dataframe, calculations
 
-url = (f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={start_date}&end_date={end_date}&daily=temperature_2m_max,temperature_2m_min")
+(latitude, longitude, start_date, end_date) = api_inputs()
+daily_data = api_call(latitude, longitude, start_date, end_date)
 
-api_response = requests.get(url)
 
-json_string = api_response.json()
 
-daily_data = json_string["daily"]
+weather_df = dataframe(daily_data)
 
-# print(daily_data)
+max_temp, min_temp, avg_max_temp, avg_min_temp, avg_temp, hottest_date, coldest_date, temp_range_avg = calculations(weather_df)
 
-# print()
 
-weather_df = pd.DataFrame({
-    "date" : daily_data["time"],
-    "max temperature" : daily_data["temperature_2m_max"],
-    "min temperature" : daily_data["temperature_2m_min"]
-})
 
-weather_df["date"] = pd.to_datetime(weather_df["date"])
 
-print(weather_df)
