@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-import matplotlib as mpl
+import matplotlib.pyplot as plt
 from datetime import datetime,timedelta
 
 
@@ -47,3 +47,29 @@ def calculations(weather_df):
     temp_range = weather_df["max temperature"] - weather_df["min temperature"]
     temp_range_avg = temp_range.mean()
     return max_temp, min_temp, avg_max_temp, avg_min_temp, avg_temp, hottest_date, coldest_date, temp_range_avg
+
+
+def hot_and_cold_graph(weather_df):
+    plt.figure(figsize = (15,10))
+    plt.plot(weather_df["date"],weather_df["max temperature"], label = "max temp")
+    plt.plot(weather_df["date"],weather_df["min temperature"], label = "min temp")
+    plt.xlabel("Date")
+    plt.ylabel("Temperature (°C)")
+    plt.title("max and min temp weather report")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("output/max_min_report.png")
+    plt.show()
+   
+
+def daily_avg_graph(weather_df):
+    plt.figure(figsize=(15,10))
+    plt.plot(weather_df["date"],weather_df["daily_avg_temp"], label = "daily avg temp")
+    plt.xlabel("Date")
+    plt.ylabel("Avg Temperature (°C)")
+    plt.title("daily average temperature")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("output/avg_daily_temp.png")
+    plt.show()
+   
