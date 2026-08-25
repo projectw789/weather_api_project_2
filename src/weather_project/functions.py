@@ -16,8 +16,7 @@ def api_inputs():
     end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
 
     if start_date_dt>end_date_dt:
-        print("Please ensure your start date is before the end date.")
-        return None
+        raise ValueError("start date must be before end date")
 
     return (latitude, longitude, start_date, end_date)
 
