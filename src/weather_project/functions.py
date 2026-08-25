@@ -7,23 +7,13 @@ from datetime import datetime
 
 
 def api_inputs():
-    try:
-        latitude = float(input("What is the latitude?(00.00 format)  "))
-        longitude = float(input("What is the longitude?(00.00 format) "))
-        start_date = input("What is the start date?(YYYY-MM-DD format) ")
-        end_date = input("What is the end date?(YYYY-MM-DD format) ")
-
-    except ValueError:
-        print("Please enter the co-ordinates in the correct float format.")
-        return None
-
-    try:
-        start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
-        end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
-
-    except ValueError:
-        print("Please enter dates in the correct format.")
-        return None
+    
+    latitude = float(input("What is the latitude?(00.00 format)  "))
+    longitude = float(input("What is the longitude?(00.00 format) "))
+    start_date = input("What is the start date?(YYYY-MM-DD format) ")
+    end_date = input("What is the end date?(YYYY-MM-DD format) ")
+    start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
 
     if start_date_dt>end_date_dt:
         print("Please ensure your start date is before the end date.")
@@ -34,27 +24,11 @@ def api_inputs():
 
 def api_call(latitude, longitude, start_date, end_date):
     url = (f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={start_date}&end_date={end_date}&daily=temperature_2m_max,temperature_2m_min")
-    try:
-        api_response = requests.get(url)
-        api_response.raise_for_status()
-        json_ = api_response.json()
-        daily_data = json_["daily"]
 
-    except requests.exceptions.ConnectionError:
-        print("Connection Error, please try again later.")
-        return None
-
-    except requests.exceptions.HTTPError:
-        print("HTTP Error, please recheck your date inputs.")
-        return None
-
-    except requests.exceptions.JSONDecodeError:
-        print("Sorry, we didn't recieve a valid JSON response.")
-        return None
-
-    except KeyError:
-        print("Sorry, we could not find the 'daily' data within the API JSON response.")
-        return None
+    api_response = requests.get(url)
+    api_response.raise_for_status()
+    json_ = api_response.json()
+    daily_data = json_["daily"]
 
     return daily_data
 
